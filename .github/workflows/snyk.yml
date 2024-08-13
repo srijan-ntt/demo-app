@@ -19,7 +19,7 @@ jobs:
      - name: Install dependencies
        run: npm install
      - name: Run Snyk to check for vulnerabilities
-       uses: snyk/actions@v3
+       uses: snyk/actions/node@master
        with:
          args: test
        env:
