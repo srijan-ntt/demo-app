@@ -1,13 +1,33 @@
-name: Example workflow using Snyk
-on: push
+name : Snyk Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+      - main
 jobs:
-  security:
+  snyk:
+    name: Snyk Vulnerability Scan
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          command: monitor
+          java-version: '11'
+      - name: Install Snyk CLI
+        uses: snyk/actions/setup@v3
+
+      - name: Authenticate Snyk
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
+        run: snyk auth $SNYK_TOKEN
+
+      - name: Snyk test for Vulnerabilities
+        run:  snyk test --all-projects --severity-threshold=medium
+
+      - name: Monitor project for new vulnerabilities
+        run: snyk monitor --all-projects
