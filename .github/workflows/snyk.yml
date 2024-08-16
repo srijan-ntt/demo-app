@@ -13,7 +13,7 @@ jobs:
         with:
           java-version: '11'
       - name: Install Snyk CLI
-        uses: snyk/actions/setup@v1
+        uses: snyk/actions/setup@v2
 
       - name: Authenticate Snyk
         env:
