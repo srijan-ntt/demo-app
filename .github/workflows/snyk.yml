@@ -16,8 +16,6 @@ jobs:
          java-version: '11'
      - name: Install Maven
        run: sudo apt-get install -y maven
-     - name: Build the project
-       run: mvn clean package
      - name: Run Snyk to check vulnerabilities
        env:
          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
