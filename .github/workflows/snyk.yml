@@ -1,25 +1,26 @@
-name : Snyk Security Scan
-on: push
+name: Snyk Vulnerability Scan
+on:
+ push:
+   branches: [main]
+ pull_request:
+   branches: [main]
 jobs:
-  snyk:
-    name: Snyk Vulnerability Scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '8'
-
-      - name: Authenticate Snyk
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN}}
-        run: snyk auth $SNYK_TOKEN
-
-      - name: Snyk test for Vulnerabilities
-        run:  snyk test --all-projects --severity-threshold=medium
-
-      - name: Monitor project for new vulnerabilities
-        run: snyk monitor --all-projects
+ snyk:
+   runs-on: ubuntu-latest
+   steps:
+     - uses: actions/checkout@v2
+     - name: Set up Java
+       uses: actions/setup-java@v2
+       with:
+         distribution: 'temurin'
+         java-version: '11'
+     - name: Install Maven
+       run: sudo apt-get install -y maven
+     - name: Build the project
+       run: mvn clean package
+     - name: Run Snyk to check vulnerabilities
+       env:
+         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+       run: |
+         mvn dependency:tree | tee dependency_tree.txt
+         snyk test --file=pom.xml --all-projects
