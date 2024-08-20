@@ -1,0 +1,24 @@
+name: Deploy to CloudHub
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'temurin'  # Specify the Java distribution here
+
+    - name: Build and Deploy
+      run: mvn clean deploy
+      env:
+        anypoint.username: ${{ secrets.ANYPOINT_USERNAME }}
+        anypoint.password: ${{ secrets.ANYPOINT_PASSWORD }}
+        anypoint.env: "Sandbox"
